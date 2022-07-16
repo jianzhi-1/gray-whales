@@ -1,5 +1,9 @@
 # Jane Street ETC 2022
 Copy file from local machine to EC2 instance
+```shell
+scp /Users/jianzhiucb/gray-whales/main.py ubuntu@100.25.23.202:/home/ubuntu/jane
+scp /Users/jianzhiucb/gray-whales/adr.py ubuntu@100.25.23.202:/home/ubuntu/jane
+```
 
 scp /Users/jianzhiucb/gray-whales-local/sample-bot.py ubuntu@100.25.23.202:/home/ubuntu
 
