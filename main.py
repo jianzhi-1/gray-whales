@@ -32,6 +32,17 @@ team_name = "GRAYWHALES"
 def main():
     args = parse_arguments()
 
+    def process_adr_trade():
+            adr_actions = adr_strategy(symbol_trade["VALE"], symbol_trade["VALBZ"])
+            if adr_actions:
+                for command in adr_actions:
+                    if command[0] == "ADD":
+                        exchange.send_add_message(order_id=order_id_counter, symbol=command[1], dir=command[2], price=command[3], size=command[4])
+                        order_id_counter += 1
+                    elif command[0] == "CONVERT":
+                        exchange.send_convert_message(order_id=order_id_counter, symbol=command[1], dir=command[2], price=command[3], size=command[4])
+                        order_id_counter += 1
+                        
     symbol_trade = {
         "BOND": [],
         "GS": [],
@@ -142,19 +153,6 @@ def main():
                 pass
         elif message["type"] == "trade":
             symbol_trade[message["symbol"]].append(message["price"])
-
-    def process_adr_trade():
-        adr_actions = adr_strategy(symbol_trade["VALE"], symbol_trade["VALBZ"])
-        if adr_actions:
-            for command in adr_actions:
-                if command[0] == "ADD":
-                    exchange.send_add_message(order_id=order_id_counter, symbol=command[1], dir=command[2], price=command[3], size=command[4])
-                    order_id_counter += 1
-                elif command[0] == "CONVERT":
-                    exchange.send_convert_message(order_id=order_id_counter, symbol=command[1], dir=command[2], price=command[3], size=command[4])
-                    order_id_counter += 1
-
-
 
 
 
