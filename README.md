@@ -7,7 +7,7 @@ scp -r /Users/jianzhiucb/gray-whales-local/sample-bot.py ubuntu@100.25.23.202:/h
 
 Running on production
 ```production
-while true; do ./bot.py --production; sleep 1; done
+while true; do ./main.py --production; sleep 1; done
 ```
 
 ### Actual
