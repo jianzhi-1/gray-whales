@@ -3,6 +3,9 @@ Copy file from local machine to EC2 instance
 
 scp /Users/jianzhiucb/gray-whales-local/sample-bot.py ubuntu@100.25.23.202:/home/ubuntu
 
+Running on production
+# 3) Run in loop: while true; do ./bot.py --production; sleep 1; done
+
 ### Actual
 
 ```shell
