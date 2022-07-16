@@ -23,7 +23,7 @@ def adr_strategy(vale_info, valbz_trade):
         result = adr_signal(valbz, vale)
         if result:
             # print ("\n------------------------- ADR Trading -------------------------\n")
-            return [{"type" : "ADD", "symbol": "VALE", "dir" : Dir.BUY, "price": result[0] + 1, "size": 10},
-                    {"type" : "CONVERT", "symbol": "VALE", "dir" : Dir.SELL, "size": 10},
-                    {"type" : "ADD", "symbol": "VALBZ", "dir" : Dir.SELL, "price": result[1] - 1, "size": 10}]
+            return [["ADD", "VALE", Dir.BUY, result[0] + 1, 10],
+                    ["CONVERT", "VALE", Dir.SELL, 10],
+                    ["ADD", "VALBZ", Dir.SELL, result[1] - 1, 10]]
     return []
