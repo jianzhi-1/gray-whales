@@ -1,4 +1,5 @@
 from statistics import mean
+from enum import Enum
 
 class Dir(str, Enum):
     BUY = "BUY"
