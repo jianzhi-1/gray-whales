@@ -37,7 +37,7 @@ def process_adr_trade(exchange, symbol_trade, order_id_counter):
                 exchange.send_add_message(order_id=order_id_counter, symbol=command[1], dir=command[2], price=command[3], size=command[4])
                 order_id_counter += 1
             elif command[0] == "CONVERT":
-                exchange.send_convert_message(order_id=order_id_counter, symbol=command[1], dir=command[2], price=command[3], size=command[4])
+                exchange.send_convert_message(order_id=order_id_counter, symbol=command[1], dir=command[2], size=command[3])
                 order_id_counter += 1
     return order_id_counter
 
@@ -94,7 +94,7 @@ def main():
     while True:
         message = exchange.read_message()
 
-        order_id_counter = process_adr_trade(exchange, symbol_trade, order_id_counter)
+        #order_id_counter = process_adr_trade(exchange, symbol_trade, order_id_counter)
 
         # Some of the message types below happen infrequently and contain
         # important information to help you understand what your bot is doing,
