@@ -21,12 +21,12 @@ def etf_strat(bond, gs, ms, wfc, etf):
             ["CONVERT", "ETC", Dir.SELL, 10],
             ["SELL", "ETC", Dir.SELL, etf[0][0], 10]
         )
-    elif true_val + 102 > etf_val*10:
-        trade_list.append(
-            ["ADD", "ETC", Dir.BUY, etf[0][0], 10],
-            ["ADD", "GS", Dir.BUY, gs[0][0], 2],
-            ["ADD", "MS", Dir.BUY, ms[0][0], 3],
-            ["ADD", "WFC", Dir.BUY, wfc[0][0], 2],
-            ["CONVERT", "ETC", Dir.SELL, 10],
-            ["SELL", "ETC", Dir.SELL, etf[0][0], 10]
-        )
+    # elif true_val + 102 > etf_val*10:
+    #     trade_list.append(
+    #         ["ADD", "ETC", Dir.BUY, etf[0][0], 10],
+    #         ["CONVERT", "ETC", Dir.BUY, 10],
+    #         ["SELL", "BOND", Dir.SELL, bond[0][0], 3],
+    #         ["SELL", "GS", Dir.SELL, gs[0][0], 2],
+    #         ["SELL", "MS", Dir.SELL, ms[0][0], 3],
+    #         ["SELL", "WFC", Dir.SELL, wfc[0][0], 2]
+    #     )
