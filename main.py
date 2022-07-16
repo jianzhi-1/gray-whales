@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # ~~~~~==============   HOW TO RUN   ==============~~~~~
 # 1) Configure things in CONFIGURATION section
-# 2) Change permissions: chmod +x main.py
-# 3) Run in loop: while true; do ./main.py --test prod-like; sleep 1; done
+# 2) Change permissions: chmod +x bot.py
+# 3) Run in loop: while true; do ./bot.py --test prod-like; sleep 1; done
 # developers cleansing tear profit
 
 import argparse
@@ -12,7 +12,6 @@ import time
 import socket
 import json
 from bonds import bond_strat
-from adr import adr_strategy
 
 # ~~~~~============== CONFIGURATION  ==============~~~~~
 # Replace "REPLACEME" with your team name!
@@ -46,23 +45,15 @@ def main():
     # Send an order for BOND at a good price, but it is low enough that it is
     # unlikely it will be traded against. Maybe there is a better price to
     # pick? Also, you will need to send more orders over time.
-    #exchange.send_add_message(order_id=order_id_counter, symbol="BOND", dir=Dir.BUY, price=999, size=1)
-    #order_id_counter += 1
-    #exchange.send_add_message(order_id=order_id_counter, symbol="BOND", dir=Dir.SELL, price=1001, size=1)
-    #order_id_counter += 1
+    exchange.send_add_message(order_id=order_id_counter, symbol="BOND", dir=Dir.BUY, price=999, size=1)
+    order_id_counter += 1
+    exchange.send_add_message(order_id=order_id_counter, symbol="BOND", dir=Dir.SELL, price=1001, size=1)
+    order_id_counter += 1
     # Set up some variables to track the bid and ask price of a symbol. Right
     # now this doesn't track much information, but it's enough to get a sense
     # of the VALE market.
     vale_bid_price, vale_ask_price = None, None
     vale_last_print_time = time.time()
-    valbz_bid_price, valbz_ask_price = None, None
-    valbz_last_print_time = time.time()
-
-    bond_bid_price, bond_ask_price = None, None
-    bond_last_print_time = time.time()
-
-    cur_vale = []
-    cur_valbz = []
 
     # Here is the main loop of the program. It will continue to read and
     # process messages in a loop until a "close" message is received. You
@@ -104,17 +95,6 @@ def main():
                 vale_bid_price = best_price("buy")
                 vale_ask_price = best_price("sell")
 
-                cur_vale = message["buy"]
-
-                commands = adr_strategy(cur_vale, cur_valbz)
-                for command in commands:
-                    if command[0] == "ADD":
-                        exchange.send_add_message(order_id=order_id_counter, symbol=command[1], dir=command[2], price=command[3], size=command[4])
-                        order_id_counter += 1
-                    elif command[0] == "CONVERT":
-                        exchange.send_convert_message(order_id=order_id_counter, symbol=command[1], dir=command[2], price=command[3], size=command[4])
-                        order_id_counter += 1
-                    
                 now = time.time()
 
                 if now > vale_last_print_time + 1:
@@ -134,54 +114,9 @@ def main():
                 for sell_trade in sell_list:
                     exchange.send_add_message(order_id=order_id_counter, symbol=sell_trade[0], dir=sell_trade[1], price=sell_trade[2], size=sell_trade[3])
                     order_id_counter += 1
-
-                def best_price(side):
-                    if message[side]:
-                        return message[side][0][0]
-
-                bond_bid_price = best_price("buy")
-                bond_ask_price = best_price("sell")
-
-                now = time.time()
-
-                if now > bond_last_print_time + 1:
-                    bond_last_print_time = now
-                    print(
-                        {
-                            "bond_bid_price": bond_bid_price,
-                            "bond_ask_price": bond_ask_price,
-                        }
-                    )
             elif message["symbol"] == "VALBZ":
-
-                def best_price(side):
-                    if message[side]:
-                        return message[side][0][0]
-
-                valbz_bid_price = best_price("buy")
-                valbz_ask_price = best_price("sell")
-
-                cur_valbz = message["sell"]
-
-                commands = adr_strategy(cur_vale, cur_valbz)
-                for command in commands:
-                    if command[0] == "ADD":
-                        exchange.send_add_message(order_id=order_id_counter, symbol=command[1], dir=command[2], price=command[3], size=command[4])
-                        order_id_counter += 1
-                    elif command[0] == "CONVERT":
-                        exchange.send_convert_message(order_id=order_id_counter, symbol=command[1], dir=command[2], price=command[3], size=command[4])
-                        order_id_counter += 1
-
-                now = time.time()
-
-                if now > valbz_last_print_time + 1:
-                    valbz_last_print_time = now
-                    print(
-                        {
-                            "valbz_bid_price": valbz_bid_price,
-                            "valbz_ask_price": valbz_ask_price,
-                        }
-                    )
+                # logic
+                pass
             elif message["symbol"] == "GS" or message["symbol"] == "MS":
                 # logic
                 pass
