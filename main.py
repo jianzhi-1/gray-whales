@@ -29,20 +29,21 @@ team_name = "GRAYWHALES"
 # code is intended to be a working example, but it needs some improvement
 # before it will start making good trades!
 
+def process_adr_trade(exchange, symbol_trade, order_id_counter):
+    adr_actions = adr_strategy(symbol_trade["VALE"], symbol_trade["VALBZ"])
+    if adr_actions:
+        for command in adr_actions:
+            if command[0] == "ADD":
+                exchange.send_add_message(order_id=order_id_counter, symbol=command[1], dir=command[2], price=command[3], size=command[4])
+                order_id_counter += 1
+            elif command[0] == "CONVERT":
+                exchange.send_convert_message(order_id=order_id_counter, symbol=command[1], dir=command[2], price=command[3], size=command[4])
+                order_id_counter += 1
+    return order_id_counter
+
 def main():
     args = parse_arguments()
 
-    def process_adr_trade():
-            adr_actions = adr_strategy(symbol_trade["VALE"], symbol_trade["VALBZ"])
-            if adr_actions:
-                for command in adr_actions:
-                    if command[0] == "ADD":
-                        exchange.send_add_message(order_id=order_id_counter, symbol=command[1], dir=command[2], price=command[3], size=command[4])
-                        order_id_counter += 1
-                    elif command[0] == "CONVERT":
-                        exchange.send_convert_message(order_id=order_id_counter, symbol=command[1], dir=command[2], price=command[3], size=command[4])
-                        order_id_counter += 1
-                        
     symbol_trade = {
         "BOND": [],
         "GS": [],
@@ -93,7 +94,7 @@ def main():
     while True:
         message = exchange.read_message()
 
-        process_adr_trade()
+        order_id_counter = process_adr_trade(exchange, symbol_trade, order_id_counter)
 
         # Some of the message types below happen infrequently and contain
         # important information to help you understand what your bot is doing,
@@ -285,3 +286,4 @@ if __name__ == "__main__":
     ), "Please put your team name in the variable [team_name]."
 
     main()
+
