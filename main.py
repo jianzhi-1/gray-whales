@@ -28,12 +28,6 @@ team_name = "GRAYWHALES"
 # code is intended to be a working example, but it needs some improvement
 # before it will start making good trades!
 
-def order_id_generator():
-    counter = 1
-    while True:
-        yield counter
-        counter += 1
-
 def main():
     args = parse_arguments()
 
@@ -51,9 +45,10 @@ def main():
     # Send an order for BOND at a good price, but it is low enough that it is
     # unlikely it will be traded against. Maybe there is a better price to
     # pick? Also, you will need to send more orders over time.
-    exchange.send_add_message(order_id=order_id_generator(), symbol="BOND", dir=Dir.BUY, price=999, size=1)
-    exchange.send_add_message(order_id=order_id_generator(), symbol="BOND", dir=Dir.SELL, price=1001, size=1)
-
+    exchange.send_add_message(order_id=order_id_counter, symbol="BOND", dir=Dir.BUY, price=999, size=1)
+    order_id_counter += 1
+    exchange.send_add_message(order_id=order_id_counter, symbol="BOND", dir=Dir.SELL, price=1001, size=1)
+    order_id_counter += 1
     # Set up some variables to track the bid and ask price of a symbol. Right
     # now this doesn't track much information, but it's enough to get a sense
     # of the VALE market.
@@ -114,9 +109,11 @@ def main():
                 # logic
                 buy_list, sell_list = bond_strat(message["buy"], message["sell"])
                 for buy_trade in buy_list:
-                    exchange.send_add_message(order_id=order_id_generator(), symbol=buy_trade[0], dir=buy_trade[1], price=buy_trade[2], size=buy_trade[3])
+                    exchange.send_add_message(order_id=order_id_counter, symbol=buy_trade[0], dir=buy_trade[1], price=buy_trade[2], size=buy_trade[3])
+                    order_id_counter += 1
                 for sell_trade in sell_list:
-                    exchange.send_add_message(order_id=order_id_generator(), symbol=sell_trade[0], dir=sell_trade[1], price=sell_trade[2], size=sell_trade[3])
+                    exchange.send_add_message(order_id=order_id_counter, symbol=sell_trade[0], dir=sell_trade[1], price=sell_trade[2], size=sell_trade[3])
+                    order_id_counter += 1
             elif message["symbol"] == "VALBZ":
                 # logic
                 pass
