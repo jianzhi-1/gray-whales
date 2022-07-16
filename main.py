@@ -12,6 +12,7 @@ import time
 import socket
 import json
 from bonds import bond_strat
+from adr import adr_strategy
 
 # ~~~~~============== CONFIGURATION  ==============~~~~~
 # Replace "REPLACEME" with your team name!
@@ -30,6 +31,17 @@ team_name = "GRAYWHALES"
 
 def main():
     args = parse_arguments()
+
+    symbol_trade = {
+        "BOND": [],
+        "GS": [],
+        "MS": [],
+        "USD": [],
+        "VALBZ": [],
+        "VALE": [],
+        "WFC": [],
+        "XLF": []
+    }
 
     exchange = ExchangeConnection(args=args)
 
@@ -70,6 +82,8 @@ def main():
     while True:
         message = exchange.read_message()
 
+        process_adr_trade()
+
         # Some of the message types below happen infrequently and contain
         # important information to help you understand what your bot is doing,
         # so they are printed in full. We recommend not always printing every
@@ -86,26 +100,26 @@ def main():
         elif message["type"] == "fill":
             print(message)
         elif message["type"] == "book":
-            if message["symbol"] == "VALE":
+            # if message["symbol"] == "VALE":
 
-                def best_price(side):
-                    if message[side]:
-                        return message[side][0][0]
+            #     def best_price(side):
+            #         if message[side]:
+            #             return message[side][0][0]
 
-                vale_bid_price = best_price("buy")
-                vale_ask_price = best_price("sell")
+            #     vale_bid_price = best_price("buy")
+            #     vale_ask_price = best_price("sell")
 
-                now = time.time()
+            #     now = time.time()
 
-                if now > vale_last_print_time + 1:
-                    vale_last_print_time = now
-                    print(
-                        {
-                            "vale_bid_price": vale_bid_price,
-                            "vale_ask_price": vale_ask_price,
-                        }
-                    )
-            elif message["symbol"] == "BOND":
+            #     if now > vale_last_print_time + 1:
+            #         vale_last_print_time = now
+            #         print(
+            #             {
+            #                 "vale_bid_price": vale_bid_price,
+            #                 "vale_ask_price": vale_ask_price,
+            #             }
+            #         )
+            if message["symbol"] == "BOND":
                 # logic
                 buy_list, sell_list = bond_strat(message["buy"], message["sell"])
                 for buy_trade in buy_list:
@@ -126,6 +140,22 @@ def main():
             elif message["symbol"] == "XLF":
                 # logic
                 pass
+        elif message["type"] == "trade":
+            symbol_trade[message["symbol"]].append(message["price"])
+
+    def process_adr_trade():
+        adr_actions = adr_strategy(symbol_trade["VALE"], symbol_trade["VALBZ"])
+        if adr_actions:
+            for command in adr_actions:
+                if command[0] == "ADD":
+                    exchange.send_add_message(order_id=order_id_counter, symbol=command[1], dir=command[2], price=command[3], size=command[4])
+                    order_id_counter += 1
+                elif command[0] == "CONVERT":
+                    exchange.send_convert_message(order_id=order_id_counter, symbol=command[1], dir=command[2], price=command[3], size=command[4])
+                    order_id_counter += 1
+
+
+
 
 
 # ~~~~~============== PROVIDED CODE ==============~~~~~
